@@ -85,10 +85,10 @@ def _nm_get_symbol(bundle_path):
     if not os.path.exists(bundle_path):
         raise FileNotFoundError(f"The path '{bundle_path}' does not exist.")
     swift_symbols = _nm_get_swift_symbol(bundle_path)
-    objc_symbols = _nm_get_objc_symbol(bundle_path)
+    # objc_symbols = _nm_get_objc_symbol(bundle_path)
 
     merged_symbols = swift_symbols.copy()
-    merged_symbols.update(objc_symbols)
+    # merged_symbols.update(objc_symbols)
 
     return merged_symbols
 
