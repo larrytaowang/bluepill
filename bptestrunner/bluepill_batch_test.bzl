@@ -142,3 +142,11 @@ This rule WILL disregard the bluepill output folder configuration if it's set in
 config json file. Instead it will copy all the outputs to ./bazel-testlogs/$TARGET_NAME/test.outputs/
 """,
 )
+
+def bluepill_batch_test_macro(name, test_targets, config_files):
+    for index, config_file in enumerate(config_files):
+        bluepill_batch_test(
+            name = name + str(index),
+            test_targets = test_targets,
+            config_file = config_file,
+        )

@@ -17,3 +17,13 @@ native_binary(
 exports_files([
     "bluepill_batch_test_runner.template.sh"
 ])
+
+py_binary(
+    name = "nm_extract_symbol_py",
+    srcs = ["nm_extract_symbol.py"],
+    main = "nm_extract_symbol.py",
+    # data = [":transform"],  # a cc_binary which we invoke at run time
+    # deps = [
+    #     ":foolib",  # a py_library
+    # ],
+)
