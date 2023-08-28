@@ -22,7 +22,7 @@ def _extract_file_with_extension(zip_file_path, test_rule_name):
     raise FileNotFoundError(f"Test bundle '{test_rule_name}' does not exist.")
 
 def _nm_get_swift_symbol(bundle_path):
-    testClassDict = {}
+    testMethods = set()
 
     nm_command = f"nm -gU {bundle_path} | cut -d' ' -f3 | xargs -s 131072 xcrun swift-demangle | cut -d' ' -f3 | grep -e '[\\.|_]'test"
     # output = subprocess.call(,shell=True)
@@ -42,14 +42,12 @@ def _nm_get_swift_symbol(bundle_path):
             continue
         
         testClass = parts[1]
-        if testClass not in testClassDict:
-            testClassDict[testClass] = [] 
-
         testMethod = parts[2]
         if testMethod.startswith("test"):
-            testClassDict[testClass].append(testMethod)
+            fullName = f"{testClass}/{testMethod}"
+            testMethods.add(fullName)
 
-    return testClassDict
+    return list(testMethods)
             
 
 def _nm_get_objc_symbol(bundle_path):
