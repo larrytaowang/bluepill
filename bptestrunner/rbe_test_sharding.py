@@ -45,19 +45,24 @@ def shard_one_test_target(test_methods, group_count, test_estimation):
 
 
 def shard_test(test_symbols, test_estimation, jobs, test_time_per_target, no_sharding_labels, optimal_test_time):
-    test_plan = defaultdict(list)
+    test_plan = {}
 
     for test_label, test_methods in test_symbols.items():
         print(f"Sharding 'ios_unit_test' target: {test_label}")
         if test_label in no_sharding_labels:
-            test_plan[test_label].extend(test_methods)
+            if test_label not in test_plan:
+                test_plan[test_label] = {}
+            test_plan[test_label]["0"] = test_methods
+            continue
 
         total_test_time = test_time_per_target[test_label]
         count = math.ceil(1.0 * total_test_time / optimal_test_time)
         shard_lists = shard_one_test_target(test_methods, count, test_estimation)
         
         for index, methods in enumerate(shard_lists):
-            test_plan[f"{test_label}_{index}"] = methods 
+            if test_label not in test_plan:
+                test_plan[test_label] = {}
+            test_plan[test_label][index] = methods 
 
     return test_plan
 
