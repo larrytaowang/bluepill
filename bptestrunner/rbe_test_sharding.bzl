@@ -23,6 +23,7 @@ def _rbe_test_sharding_impl(ctx):
     for target in ctx.attr.no_sharding_test_targets:
         args.append(target.label.name)
 
+    # Generate Test Sharding Plan
     ctx.actions.run(
         inputs = input_files,
         outputs = [shading_plan_json_file],
@@ -31,11 +32,33 @@ def _rbe_test_sharding_impl(ctx):
         executable = ctx.executable._rbe_test_sharding_py_exec,
     )
 
+    runfiles = []
+    runfiles.extend(input_files)
+
+    # Generate Bazel BUILD file
+    new_args = []
+    runfiles.append(shading_plan_json_file)
+    runfiles.append(ctx.file.bluepill_config_template)
+
+    generated_bazel_file = ctx.actions.declare_file("BUILD.bazel")
+
+    new_args.append(shading_plan_json_file.path)
+    new_args.append(ctx.file.bluepill_config_template.path)
+    new_args.append(generated_bazel_file.path)
+    
+    ctx.actions.run(
+        inputs = [shading_plan_json_file, ctx.file.bluepill_config_template],
+        outputs = [generated_bazel_file],
+        arguments = new_args,
+        progress_message = "generate BUILD file",
+        executable = ctx.executable._rbe_bluepill_config_generator_py_exec,
+    )
+
     return [
         DefaultInfo(
-            files = depset([shading_plan_json_file]),
+            files = depset([shading_plan_json_file, generated_bazel_file]),
             runfiles = ctx.runfiles(
-                files = input_files,
+                files = runfiles,
             ), 
         )
     ]
@@ -48,7 +71,7 @@ rbe_test_sharding = rule(
         "time_estimates": attr.label(
             allow_single_file = True,
         ),
-         "bluepill_config_template": attr.label(
+        "bluepill_config_template": attr.label(
             allow_single_file = True,
         ),
         "test_method_symbols": attr.label(
@@ -58,6 +81,13 @@ rbe_test_sharding = rule(
         "_rbe_test_sharding_py_exec": attr.label(
             default = Label(
                 "//:rbe_test_sharding_py",
+            ),
+            executable = True,
+            cfg = "host",
+        ), 
+        "_rbe_bluepill_config_generator_py_exec": attr.label(
+            default = Label(
+                "//:rbe_bluepill_config_generator_py",
             ),
             executable = True,
             cfg = "host",

@@ -45,19 +45,25 @@ def generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_
     return generated_configs
 
 
-def generate_bazel_build_file(output_folder_path, ios_unit_test_label, bluepill_configs):
-    destination = f"//{output_folder_path}:__pkg__"
-    for index, config in enumerate(bluepill_configs):
-        target_name = f"{ios_unit_test_label}-sharding-{index}"
-        target_label = f"//{output_folder_path}:{target_name}"
-        command1 = f"buildozer 'new bluepill_batch_test {target_name}' {destination}"
-        subprocess.run(command1, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+def generate_bazel_build_file(build_file_output_path, ios_unit_test_label, bluepill_configs):
+    print(bluepill_configs)
+    load_statement = """load("@bptestrunner//:bluepill_batch_test.bzl", "bluepill_batch_test")\n"""
 
-        command2 = f"buildozer 'add test_targets {ios_unit_test_label}' {target_label}"
-        subprocess.run(command2, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    with open(build_file_output_path, "a") as f:
+        f.write(load_statement)
+        for index, config in enumerate(bluepill_configs):
+            target_name = f"{ios_unit_test_label}-sharding-{index}"
+            bluepill_target = f"""
+bluepill_batch_test(
+    name = "{target_name}",
+    test_targets = [
+        "//:{ios_unit_test_label}",
+    ],
+    config_file = "{config}",
+)
+"""
+            f.write(bluepill_target)
 
-        command3 = f"buildozer 'add config_file {config}' {target_label}"
-        subprocess.run(command3, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 def main():
     sharding_json_path = sys.argv[1]
@@ -76,7 +82,7 @@ def main():
    
     for ios_unit_test_label, sharding_plan in sharding_json.items():
         bluepill_configs = generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_label, sharding_plan, output_folder_path)
-        generate_bazel_build_file(output_folder_path, ios_unit_test_label, bluepill_configs)
+        generate_bazel_build_file(build_file_output_path, ios_unit_test_label, bluepill_configs)
             
 
 if __name__ == "__main__":
