@@ -29,3 +29,9 @@ py_binary(
     srcs = ["rbe_test_sharding.py"],
     main = "rbe_test_sharding.py",
 )
+
+py_binary(
+    name = "rbe_bluepill_config_generator_py",
+    srcs = ["rbe_bluepill_config_generator.py"],
+    main = "rbe_bluepill_config_generator.py",
+)
