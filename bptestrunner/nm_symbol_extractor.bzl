@@ -15,11 +15,11 @@ def _nm_symbol_extractor_impl(ctx):
 
         test_target_bundle_dict[test_target_name] = bundle_info.archive.path
     
-    test_bundle_dict_json_file = ctx.actions.declare_file("nm_test_bundle_dict.json")
-    ctx.actions.write(
-        output = test_bundle_dict_json_file,
-        content = json.encode(test_target_bundle_dict),
-    )
+    # test_bundle_dict_json_file = ctx.actions.declare_file("nm_test_bundle_dict.json")
+    # ctx.actions.write(
+    #     output = test_bundle_dict_json_file,
+    #     content = json.encode(test_target_bundle_dict),
+    # )
 
     test_target_symbols_str = repr(test_target_bundle_dict)
 
@@ -38,7 +38,7 @@ def _nm_symbol_extractor_impl(ctx):
 
     return [
         DefaultInfo(
-            files = depset([out_file, test_bundle_dict_json_file]), 
+            files = depset([out_file]), 
             runfiles = ctx.runfiles(
                 files = all_test_bundles,
             ),

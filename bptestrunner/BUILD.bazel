@@ -22,8 +22,10 @@ py_binary(
     name = "nm_extract_symbol_py",
     srcs = ["nm_extract_symbol.py"],
     main = "nm_extract_symbol.py",
-    # data = [":transform"],  # a cc_binary which we invoke at run time
-    # deps = [
-    #     ":foolib",  # a py_library
-    # ],
+)
+
+py_binary(
+    name = "rbe_test_sharding_py",
+    srcs = ["rbe_test_sharding.py"],
+    main = "rbe_test_sharding.py",
 )
