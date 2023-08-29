@@ -51,8 +51,8 @@ def shard_test(test_symbols, test_estimation, jobs, test_time_per_target, no_sha
         print(f"Sharding 'ios_unit_test' target: {test_label}")
         if test_label in no_sharding_labels:
             if test_label not in test_plan:
-                test_plan[test_label] = {}
-            test_plan[test_label]["0"] = test_methods
+                test_plan[test_label] = []
+            test_plan[test_label].append(test_methods)
             continue
 
         total_test_time = test_time_per_target[test_label]
@@ -61,8 +61,8 @@ def shard_test(test_symbols, test_estimation, jobs, test_time_per_target, no_sha
         
         for index, methods in enumerate(shard_lists):
             if test_label not in test_plan:
-                test_plan[test_label] = {}
-            test_plan[test_label][index] = methods 
+                test_plan[test_label] = []
+            test_plan[test_label].append(methods)
 
     return test_plan
 

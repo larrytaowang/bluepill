@@ -48,6 +48,9 @@ rbe_test_sharding = rule(
         "time_estimates": attr.label(
             allow_single_file = True,
         ),
+         "bluepill_config_template": attr.label(
+            allow_single_file = True,
+        ),
         "test_method_symbols": attr.label(
             allow_single_file = True,
         ),
