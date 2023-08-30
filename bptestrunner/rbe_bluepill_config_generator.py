@@ -24,7 +24,7 @@ def generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_
     if len(sharding_plan) == 1:
         # If there is only one shard, no need to use 'exclude'/'include' attr
         bluepill_config = bluepill_config_template.copy()
-        bluepill_config_path = os.path.join(output_folder_path, f"bluepill-{ios_unit_test_label}")
+        bluepill_config_path = os.path.join(output_folder_path, f"bluepill-{ios_unit_test_label}.json")
         write_bluepill_config_json_file(bluepill_config, bluepill_config_path)
         generated_configs.append(bluepill_config_path)
     else:
@@ -32,7 +32,7 @@ def generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_
         dispatched_test_methods = []
         for index, test_methods in enumerate(sharding_plan):
             bluepill_config = bluepill_config_template.copy()
-            bluepill_config_path = os.path.join(output_folder_path, f"bluepill-{ios_unit_test_label}-{index}")
+            bluepill_config_path = os.path.join(output_folder_path, f"bluepill-{ios_unit_test_label}-{index}.json")
             if index != len(sharding_plan) - 1:
                 bluepill_config["include"] = test_methods
                 dispatched_test_methods.extend(test_methods)
@@ -46,20 +46,22 @@ def generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_
 
 
 def generate_bazel_build_file(build_file_output_path, ios_unit_test_label, bluepill_configs):
-    print(bluepill_configs)
+    
     load_statement = """load("@bptestrunner//:bluepill_batch_test.bzl", "bluepill_batch_test")\n"""
 
     with open(build_file_output_path, "a") as f:
         f.write(load_statement)
         for index, config in enumerate(bluepill_configs):
             target_name = f"{ios_unit_test_label}-sharding-{index}"
+            base_name = os.path.basename(config)
+
             bluepill_target = f"""
 bluepill_batch_test(
     name = "{target_name}",
     test_targets = [
         "//:{ios_unit_test_label}",
     ],
-    config_file = "{config}",
+    config_file = "bluepill_config/{base_name}",
 )
 """
             f.write(bluepill_target)
@@ -68,20 +70,25 @@ bluepill_batch_test(
 def main():
     sharding_json_path = sys.argv[1]
     bluepill_config_template_path = sys.argv[2]
-    build_file_output_path = sys.argv[3]
+    # build_file_output_path = sys.argv[3]
 
-    output_folder_path = os.path.dirname(build_file_output_path)
+    # output_folder_path = os.path.dirname(build_file_output_path)
+    output_folder_path = sys.argv[3]
 
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
-    
+
+    build_file_output_path = os.path.join(output_folder_path, "BUILD.bazel")
     with open(build_file_output_path, 'w') as f:
         pass  # This creates an empty file
 
     sharding_json = read_json(sharding_json_path)
    
+    bluepill_output_folder = os.path.join(output_folder_path, "bluepill_config")
+    if not os.path.exists(bluepill_output_folder):
+        os.makedirs(bluepill_output_folder)
     for ios_unit_test_label, sharding_plan in sharding_json.items():
-        bluepill_configs = generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_label, sharding_plan, output_folder_path)
+        bluepill_configs = generate_bluepill_config_files(bluepill_config_template_path, ios_unit_test_label, sharding_plan, bluepill_output_folder)
         generate_bazel_build_file(build_file_output_path, ios_unit_test_label, bluepill_configs)
             
 

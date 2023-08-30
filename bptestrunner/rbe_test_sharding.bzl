@@ -36,19 +36,22 @@ def _rbe_test_sharding_impl(ctx):
     runfiles.extend(input_files)
 
     # Generate Bazel BUILD file
+
     new_args = []
     runfiles.append(shading_plan_json_file)
     runfiles.append(ctx.file.bluepill_config_template)
 
-    generated_bazel_file = ctx.actions.declare_file("BUILD.bazel")
+
+    generated_folder = ctx.actions.declare_directory("rbe-sharding")
+    # generated_bazel_file = ctx.actions.declare_file("BUILD.bazel")
 
     new_args.append(shading_plan_json_file.path)
     new_args.append(ctx.file.bluepill_config_template.path)
-    new_args.append(generated_bazel_file.path)
+    new_args.append(generated_folder.path)
     
     ctx.actions.run(
         inputs = [shading_plan_json_file, ctx.file.bluepill_config_template],
-        outputs = [generated_bazel_file],
+        outputs = [generated_folder],
         arguments = new_args,
         progress_message = "generate BUILD file",
         executable = ctx.executable._rbe_bluepill_config_generator_py_exec,
@@ -56,7 +59,7 @@ def _rbe_test_sharding_impl(ctx):
 
     return [
         DefaultInfo(
-            files = depset([shading_plan_json_file, generated_bazel_file]),
+            files = depset([shading_plan_json_file, generated_folder]),
             runfiles = ctx.runfiles(
                 files = runfiles,
             ), 
