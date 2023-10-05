@@ -104,7 +104,7 @@ The exit code of Bluepill uses bit indicators which could represent multiple exi
 
 ## Requirements
 
-Bluepill officially supports **Xcode 14.0**. If you're looking for old Xcode support, please checkout the following branches:
+Bluepill officially supports **Xcode 14.1**. If you're looking for old Xcode support, please checkout the following branches:
 
 * [Xcode-10.0](https://github.com/linkedin/bluepill/tree/xcode-10.0)  | [Xcode-10.1](https://github.com/linkedin/bluepill/tree/xcode-10.1)  | [Xcode-10.2](https://github.com/linkedin/bluepill/tree/xcode-10.2)  | [Xcode-10.3](https://github.com/linkedin/bluepill/tree/xcode-10.3)
 * [Xcode-11.0](https://github.com/linkedin/bluepill/tree/xcode-11.0)  | [Xcode-11.1](https://github.com/linkedin/bluepill/tree/xcode-11.1)  | [Xcode-11.2](https://github.com/linkedin/bluepill/tree/xcode-11.2)  | [Xcode-11.3](https://github.com/linkedin/bluepill/tree/xcode-11.3)  | [Xcode-11.4](https://github.com/linkedin/bluepill/tree/xcode-11.4)  | [Xcode-11.5](https://github.com/linkedin/bluepill/tree/xcode-11.5)
