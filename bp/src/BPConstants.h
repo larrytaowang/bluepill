@@ -11,8 +11,8 @@
 
 #pragma mark - Version Constants
 #define BP_DEFAULT_XCODE_VERSION "14.1"
-#define BP_DEFAULT_RUNTIME "iOS 16.0"
-#define BP_DEFAULT_BASE_SDK "16.0"
+#define BP_DEFAULT_RUNTIME "iOS 16.1"
+#define BP_DEFAULT_BASE_SDK "16.1"
 
 #define BP_DEFAULT_DEVICE_TYPE "iPhone 11"
 
