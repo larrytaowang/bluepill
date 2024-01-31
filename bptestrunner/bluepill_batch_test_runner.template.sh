@@ -18,6 +18,8 @@ BP_TEST_ESTIMATE_JSON="bp_test_time_estimates_json"
 BP_TEST_PLAN="bp_test_plan"
 BP_PATH="bp_path"
 BLUEPILL_PATH="bluepill_path"
+LI_NODE_EXPORTER_FOLDER="/export/content/data/li_node_exporter"
+RBE_BLUEPILL_EXECUTION_LOG_FILE="$LI_NODE_EXPORTER_FOLDER/bluepill_execution.log"
 
 # Remove existing working folder for a clean state
 rm -rf $BP_WORKING_FOLDER
@@ -88,6 +90,9 @@ echo "Hostname: $(hostname)"
 # Move Bluepill output to bazel-testlogs
 ditto "outputs" "$TEST_UNDECLARED_OUTPUTS_DIR"
 rm -rf "outputs"
+
+mkdir -p "$LI_NODE_EXPORTER_FOLDER"
+echo "| $(date +%s) | $RC |" >> "$RBE_BLUEPILL_EXECUTION_LOG_FILE"
 
 echo "Exit code: $RC"
 exit $RC
